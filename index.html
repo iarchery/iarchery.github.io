@@ -157,12 +157,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Markdown-语法和-MWeb-写作使用说明"><a href="#Markdown-语法和-MWeb-写作使用说明" class="headerlink" title="Markdown 语法和 MWeb 写作使用说明"></a>Markdown 语法和 MWeb 写作使用说明</h1><h2 id="Markdown-的设计哲学"><a href="#Markdown-的设计哲学" class="headerlink" title="Markdown 的设计哲学"></a>Markdown 的设计哲学</h2><blockquote>
-<p>Markdown 的目標是實現「易讀易寫」。<br>不過最需要強調的便是它的可讀性。一份使用 Markdown 格式撰寫的文件應該可以直接以純文字發佈，並且看起來不會像是由許多標籤或是格式指令所構成。<br>Markdown 的語法有個主要的目的：用來作為一種網路內容的<em>寫作</em>用語言。</p>
+        <p>#OpenSSl 加解密<br>环境: Mac, Openssl version &gt; LibreSSL 2.6.5</p>
+<p>[TOC]</p>
+<p>###生成私钥 key.pem<br>生成2048bit的私钥<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> openssl genrsa -out Key.pem 2048</span><br></pre></td></tr></table></figure></p>
+<p><img src="media/15573030277688.jpg" alt></p>
+<p>###生成公钥 pub.pem<br>使用私钥生成公钥<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsa -in Key.pem -pubout -out pub.pem</span><br></pre></td></tr></table></figure></p>
+<p><img src="media/15573030578904.jpg" alt></p>
+<p>###使用公钥加密</p>
+<p>生成一个需要被加密的文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo -n 'Hello World' &gt; msg.bin</span><br><span class="line">hexdump -Cv msg.bin</span><br></pre></td></tr></table></figure>
+<p>加密文件<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsautl -in msg.bin -out msg.bin.enc -inkey pub.pem -pubin -encrypt -pkcs</span><br></pre></td></tr></table></figure></p>
+<p>用man查询openssl rsautl 的用法</p>
+<blockquote>
+<p>-in file<br>             The input to read from, or standard input if not specified.<br>-inkey file<br>             The input key file; by default an RSA private key.<br>-out file<br>             The output file to write to, or standard output if not specified.<br>-pubin<br>            The input file is an RSA public<br>-encrypt<br>             Encrypt the input data using an RSA public key.<br>-oaep | -pkcs | -raw<br>             The padding to use: PKCS#1 OAEP, PKCS#1 v1.5 (the default), or no<br>             padding, respectively.  For signatures, only -pkcs and -raw can<br>             be used.</p>
 </blockquote>
-        
-          <a class="article-more-a" href="/2019/04/27/hello-world/#more">more >></a>
-        
+<p>###使用私钥解密</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsautl -in msg.bin.enc -out msg.bin.dec -inkey Key.pem -decrypt -pkcs</span><br></pre></td></tr></table></figure>
+<p>解密出来的 msg.bin.dec 文件内容，就是原来的msg.bin的内容</p>
+<p>###PS. 这是使用公钥加密，使用私钥解密的例子。这是单向加解密。<br>双向加解密就是，互相持有对方的公钥。使用公钥加密，对方使用私钥解密</p>
+
       
 
       
